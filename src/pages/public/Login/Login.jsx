@@ -25,7 +25,7 @@ const Login = () => {
       console.log('Iniciando sesión con:', { email, password });
 
       // ✅ Redirección
-      navigate('/CambioContraseña');
+      navigate('/ComInventario');
     }
 
     setValidated(true);
