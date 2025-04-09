@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Search, Menu, Plus, Trash2, Edit, AlertTriangle, Package, TrendingUp, TrendingDown, RefreshCw, Clipboard, FileText, Settings, LogOut, ChevronDown } from 'lucide-react';
+import { Search, Plus, Trash2, Edit, AlertTriangle, Package, TrendingUp, TrendingDown, RefreshCw, Clipboard, FileText, Settings, ChevronDown } from 'lucide-react';
+import Sidebar from '../../../components/Sidebar/Sidebar';
 
 export default function Dashboard() {
   const [collapsed, setCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [showProductModal, setShowProductModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -54,63 +54,14 @@ export default function Dashboard() {
 
   return (
     <div className="d-flex h-100">
-      {/* Sidebar */}
-      <div className={`${collapsed ? 'sidebar-collapsed' : 'sidebar-expanded'} d-flex flex-column bg-dark text-white`}>
-        <div className="p-3 d-flex align-items-center justify-content-between border-bottom border-secondary">
-          {!collapsed && <h2 className="fs-4 fw-bold mb-0">Kardex</h2>}
-          <button 
-            onClick={() => setCollapsed(!collapsed)} 
-            className="btn btn-dark p-1"
-          >
-            <Menu size={20} />
-          </button>
-        </div>
-        <div className="d-flex flex-column flex-grow-1 overflow-auto">
-          <nav className="mt-3 flex-grow-1">
-            <button 
-              onClick={() => setActiveTab('dashboard')} 
-              className={`d-flex align-items-center px-3 py-2 w-100 border-0 text-start ${activeTab === 'dashboard' ? 'active-nav-item' : 'nav-item'}`}
-            >
-              <Package size={20} />
-              {!collapsed && <span className="ms-3">Dashboard</span>}
-            </button>
-            <button 
-              onClick={() => setActiveTab('inventory')} 
-              className={`d-flex align-items-center px-3 py-2 w-100 border-0 text-start ${activeTab === 'inventory' ? 'active-nav-item' : 'nav-item'}`}
-            >
-              <Clipboard size={20} />
-              {!collapsed && <span className="ms-3">Inventario</span>}
-            </button>
-            <button 
-              onClick={() => setActiveTab('movements')} 
-              className={`d-flex align-items-center px-3 py-2 w-100 border-0 text-start ${activeTab === 'movements' ? 'active-nav-item' : 'nav-item'}`}
-            >
-              <RefreshCw size={20} />
-              {!collapsed && <span className="ms-3">Movimientos</span>}
-            </button>
-            <button 
-              onClick={() => setActiveTab('reports')} 
-              className={`d-flex align-items-center px-3 py-2 w-100 border-0 text-start ${activeTab === 'reports' ? 'active-nav-item' : 'nav-item'}`}
-            >
-              <FileText size={20} />
-              {!collapsed && <span className="ms-3">Reportes</span>}
-            </button>
-            <button 
-              onClick={() => setActiveTab('settings')} 
-              className={`d-flex align-items-center px-3 py-2 w-100 border-0 text-start ${activeTab === 'settings' ? 'active-nav-item' : 'nav-item'}`}
-            >
-              <Settings size={20} />
-              {!collapsed && <span className="ms-3">Configuración</span>}
-            </button>
-          </nav>
-          <div className="mt-auto p-3 border-top border-secondary">
-            <button className="d-flex align-items-center w-100 px-3 py-2 btn btn-dark">
-              <LogOut size={20} />
-              {!collapsed && <span className="ms-3">Cerrar sesión</span>}
-            </button>
-          </div>
-        </div>
-      </div>
+      
+      {/* Sidebar Component */}
+      <Sidebar 
+        collapsed={collapsed} 
+        setCollapsed={setCollapsed} 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
+      />
 
       {/* Main Content */}
       <div className="flex-grow-1 d-flex flex-column overflow-hidden">
@@ -157,17 +108,6 @@ export default function Dashboard() {
         <main className="flex-grow-1 overflow-auto bg-light p-4">
           {activeTab === 'dashboard' && (
             <div className="mb-4">
-              <div className="d-flex align-items-center justify-content-between mb-4">
-                <h1 className="fs-4 fw-bold">Dashboard de Inventario</h1>
-                <button 
-                  className="btn btn-primary d-flex align-items-center"
-                  onClick={() => setShowProductModal(true)}
-                >
-                  <Plus size={18} className="me-2" />
-                  Nuevo Producto
-                </button>
-              </div>
-
               {/* Stats Cards */}
               <div className="row g-4 mb-4">
                 {stats.map((stat, index) => (
@@ -175,7 +115,7 @@ export default function Dashboard() {
                     <div className="card h-100">
                       <div className="card-body d-flex align-items-center">
                         <div className={`${stat.color} p-3 rounded me-3 text-white`}>
-                          <stat.icon size={24} />
+                          <stat.icon size={50} />
                         </div>
                         <div>
                           <p className="card-subtitle mb-1 text-muted">{stat.title}</p>
@@ -290,7 +230,6 @@ export default function Dashboard() {
                 <h1 className="fs-4 fw-bold">Inventario de Productos</h1>
                 <button 
                   className="btn btn-primary d-flex align-items-center"
-                  onClick={() => setShowProductModal(true)}
                 >
                   <Plus size={18} className="me-2" />
                   Nuevo Producto
@@ -397,124 +336,6 @@ export default function Dashboard() {
           )}
         </main>
       </div>
-
-      {/* Modal para añadir producto */}
-      {showProductModal && (
-        <div className="modal fade show" style={{display: 'block'}} tabIndex="-1">
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Añadir Nuevo Producto</h5>
-                <button 
-                  type="button" 
-                  className="btn-close" 
-                  onClick={() => setShowProductModal(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <div className="mb-3">
-                  <label htmlFor="productCode" className="form-label">Código</label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
-                    id="productCode"
-                    placeholder="P007"
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="productName" className="form-label">Nombre del Producto</label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
-                    id="productName"
-                    placeholder="Nombre del producto"
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="productCategory" className="form-label">Categoría</label>
-                  <select className="form-select" id="productCategory">
-                    <option>Electrónicos</option>
-                    <option>Periféricos</option>
-                    <option>Almacenamiento</option>
-                    <option>Audio</option>
-                    <option>Otra categoría</option>
-                  </select>
-                </div>
-                <div className="row g-3 mb-3">
-                  <div className="col-md-6">
-                    <label htmlFor="initialStock" className="form-label">Stock Inicial</label>
-                    <input 
-                      type="number" 
-                      className="form-control" 
-                      id="initialStock"
-                      placeholder="0"
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label htmlFor="minStock" className="form-label">Stock Mínimo</label>
-                    <input 
-                      type="number" 
-                      className="form-control" 
-                      id="minStock"
-                      placeholder="5"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button 
-                  type="button" 
-                  className="btn btn-secondary" 
-                  onClick={() => setShowProductModal(false)}
-                >
-                  Cancelar
-                </button>
-                <button type="button" className="btn btn-primary">
-                  Guardar Producto
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="modal-backdrop fade show"></div>
-        </div>
-      )}
-
-      {/* CSS específico necesario */}
-      <style jsx>{`
-        html, body, #root {
-          height: 100vh;
-        }
-        
-        .sidebar-expanded {
-          width: 240px;
-          transition: width 0.3s;
-        }
-        
-        .sidebar-collapsed {
-          width: 70px;
-          transition: width 0.3s;
-        }
-        
-        .nav-item {
-          color: #fff;
-          background: transparent;
-          transition: background-color 0.2s;
-        }
-        
-        .nav-item:hover {
-          background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .active-nav-item {
-          color: #fff;
-          background-color: #0d6efd;
-          transition: background-color 0.2s;
-        }
-        
-        .modal-backdrop {
-          background-color: rgba(0, 0, 0, 0.5);
-        }
-      `}</style>
     </div>
   );
 }

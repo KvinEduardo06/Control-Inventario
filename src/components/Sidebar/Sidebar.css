@@ -1,0 +1,53 @@
+html, body, #root {
+  height: 100vh;
+}
+
+.sidebar-expanded {
+  width: 240px;
+  transition: width 0.3s;
+}
+
+.sidebar-collapsed {
+  width: 100px;
+  transition: width 0.3s;
+}
+
+/* Estilos para modo claro */
+.nav-item {
+  color: #000000;
+  background: transparent;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-item:hover {
+  background-color: rgba(8, 74, 255, 0.557);
+  color: #ffffff;
+}
+
+/* Estilos para modo oscuro */
+.nav-item-dark {
+  color: #ffffff;
+  background: transparent;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-item-dark:hover {
+  background-color: rgba(6, 68, 154, 0.673);
+  color: #ffffff;
+}
+
+.active-nav-item {
+  background-color: rgba(0, 106, 255, 0.673);
+  color: #ffffff;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Estilos para el modo oscuro a nivel global */
+body.dark-mode {
+  background-color: #121212;
+}

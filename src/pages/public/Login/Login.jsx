@@ -25,7 +25,7 @@ const Login = () => {
       console.log('Iniciando sesión con:', { email, password });
 
       // ✅ Redirección
-      navigate('/ComInventario');
+      navigate('/ComoInventario');
     }
 
     setValidated(true);
