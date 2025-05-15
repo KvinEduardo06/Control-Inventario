@@ -1,0 +1,112 @@
+.inventory-dashboard {
+    background-color: #f5f7fa;
+    font-family: 'Inter', sans-serif;
+}
+
+.dashboard-title {
+    color: #1a3353;
+    font-weight: 600;
+}
+
+.metric-card {
+    border-radius: 12px;
+    border: none;
+    position: relative;
+    overflow: hidden;
+    min-height: 120px;
+}
+
+.metric-card .card-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    opacity: 0.8;
+}
+
+.metric-card h6 {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.metric-card h3 {
+    font-weight: 600;
+}
+
+.bg-purple {
+    background-color: #6f42c1;
+}
+
+.data-analytics-card {
+    padding: 20px;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+}
+
+.upgrade-card {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    position: relative;
+}
+
+.red-bag-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #dc3545;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.finance-chart {
+    height: 100px;
+    margin-top: 20px;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: flex-end;
+    height: 100%;
+    gap: 10px;
+}
+
+.chart-bars .bar {
+    flex: 1;
+    background: linear-gradient(to top, #6f42c1 60%, #9a78dc 100%);
+    border-radius: 4px 4px 0 0;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.activity-amount {
+    font-weight: 600;
+}
+
+.category-box {
+    border-radius: 12px;
+}
+
+.bg-warning-light {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.bg-info-light {
+    background-color: rgba(13, 202, 240, 0.1);
+}
+
+table {
+    font-size: 14px;
+}
+
+.badge {
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 8px;
+}

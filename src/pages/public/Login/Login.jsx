@@ -1,34 +1,112 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col, Card, Form, Button, InputGroup } from 'react-bootstrap';
 import { Eye, EyeOff, User, Lock } from 'lucide-react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { useLogin } from './LoginProvider';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [validated, setValidated] = useState(false);
-  const navigate = useNavigate(); // <-- Este hook debe ir AQUÍ, dentro del componente
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { login, loginWithGoogle } = useLogin();
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
+
+  // PROVIDER
+  const loginContext = useLogin();
+  console.log("Contexto de Login:", loginContext);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     const form = event.currentTarget;
     event.preventDefault();
 
     if (form.checkValidity() === false) {
       event.stopPropagation();
     } else {
-      console.log('Iniciando sesión con:', { email, password });
+      setLoading(true);
+      try {
+        console.log('Iniciando sesión con usuario:', { username, password });
 
-      // ✅ Redirección
-      navigate('/ComoInventario');
+        // Llamada a la API
+        const response = await fetch('http://172.16.20.149:4000/api/public/usuario/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            usuario: username, // Usar directamente el nombre de usuario
+            clave: password
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Error al iniciar sesión');
+        }
+
+        // Crear un email ficticio para mantener compatibilidad con el contexto existente
+        const mockEmail = `${username}@domain.com`;
+
+        // Si la respuesta es exitosa, continuamos con el login del contexto
+        const success = login(mockEmail, password);
+
+        if (success) {
+          // Guardar token de la API si viene en la respuesta
+          if (data.token) {
+            localStorage.setItem('apiToken', data.token);
+          }
+
+          // Guardar también el nombre de usuario real
+          localStorage.setItem('username', username);
+
+          Swal.fire({
+            title: `¡Bienvenido!`,
+            text: 'Has iniciado sesión correctamente.',
+            icon: 'success',
+            confirmButtonText: 'Continuar'
+          });
+
+          navigate('/ComoInventario');
+        }
+      } catch (error) {
+        console.error("Error en la autenticación:", error);
+        Swal.fire({
+          title: 'Error',
+          text: error.message || 'No se pudo iniciar sesión. Verifica tus credenciales.',
+          icon: 'error',
+          confirmButtonText: 'Intentar de nuevo'
+        });
+      } finally {
+        setLoading(false);
+      }
     }
 
     setValidated(true);
+  };
+
+  const handleGoogleLogin = async () => {
+    if (loadingGoogle) return;
+    setLoadingGoogle(true);
+
+    try {
+      // Usar la función loginWithGoogle del contexto
+      const success = await loginWithGoogle();
+
+      if (success) {
+        navigate('/ComoInventario');
+      }
+    } finally {
+      setLoadingGoogle(false);
+    }
   };
 
   return (
@@ -43,22 +121,22 @@ const Login = () => {
               </div>
 
               <Form noValidate validated={validated} onSubmit={handleSubmit}>
-                <Form.Group className="mb-4" controlId="formEmail">
-                  <Form.Label>Correo electrónico</Form.Label>
+                <Form.Group className="mb-4" controlId="formUsername">
+                  <Form.Label>Nombre de usuario</Form.Label>
                   <InputGroup hasValidation>
                     <InputGroup.Text className="bg-light border-end-0">
                       <User size={18} className="text-primary" />
                     </InputGroup.Text>
                     <Form.Control
                       required
-                      type="email"
-                      placeholder="nombre@ejemplo.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      type="text"
+                      placeholder="kevin.eduardo"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
                       className="bg-light border-start-0"
                     />
                     <Form.Control.Feedback type="invalid">
-                      Por favor ingresa un correo electrónico válido.
+                      Por favor ingresa tu nombre de usuario.
                     </Form.Control.Feedback>
                   </InputGroup>
                 </Form.Group>
@@ -113,10 +191,23 @@ const Login = () => {
                     type="submit"
                     size="lg"
                     className="py-3 fw-bold"
+                    disabled={loading}
                   >
-                    Iniciar sesión
+                    {loading ? 'Iniciando sesión...' : 'Iniciar sesión'}
                   </Button>
 
+                  {/* <div className="d-grid mt-3">
+                    <Button
+                      variant="danger"
+                      size="lg"
+                      onClick={handleGoogleLogin}
+                      className="py-3"
+                      disabled={loadingGoogle}
+                    >
+                      <i className="bi bi-google me-2"></i>
+                      {loadingGoogle ? "Cargando..." : "Iniciar sesión con Google"}
+                    </Button>
+                  </div> */}
                 </div>
               </Form>
 
@@ -125,8 +216,6 @@ const Login = () => {
                   ¿No tienes una cuenta? <Link to="/registro" className="text-primary fw-bold">Regístrate</Link>
                 </p>
               </div>
-
-
             </Card.Body>
           </Card>
         </Col>

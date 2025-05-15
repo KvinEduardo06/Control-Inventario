@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './ChangePassword.css'; // Archivo CSS para estilos personalizados
+import './ChangePassword.css';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { CambiarContraseña } from './CambiarContraseña'; // Ajusta la ruta según tu estructura
+import { toast } from 'react-toastify';
 
 const ChangePassword = () => {
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     password: '',
     confirmPassword: ''
@@ -11,6 +17,21 @@ const ChangePassword = () => {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+
+  // Obtener el token de la URL
+  const { token } = useParams(); // Si usas React Router con parámetros de ruta
+  
+  // Alternativa: obtener token de query parameters
+  const useQuery = () => {
+    return new URLSearchParams(useLocation().search);
+  };
+  const query = useQuery();
+  const queryToken = query.get('token');
+  
+  // Usar el token que venga de cualquiera de las dos opciones
+  const tokenToUse = token || queryToken;
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,28 +59,54 @@ const ChangePassword = () => {
     return errors;
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validate();
     setFormErrors(errors);
     
     if (Object.keys(errors).length === 0) {
       setIsSubmitting(true);
+      setErrorMessage('');
       
-      // Simulación de envío al servidor
-      setTimeout(() => {
+      try {
+        // Preparar datos para enviar al servicio
+        const empleadoData = {
+          clave: formData.password,
+          token: tokenToUse
+        };
+        
+        // Llamar al servicio de cambio de contraseña
+        const response = await CambiarContraseña(empleadoData);
+        console.log("✅ Respuesta del servidor:", response);
+
         setIsSubmitting(false);
         setIsSuccess(true);
+        setSuccessMessage(response.message || 'Empleado creado correctamente');
+
+        // Mostrar toast de éxito
+        toast.success('¡Contraseña cambiada exitosamente!');
         
-        // Reset después de mostrar éxito
+        // Limpiar formulario
+        setFormData({
+          password: '',
+          confirmPassword: ''
+        });
+        
+        // Redireccionar al login después de un breve retraso
         setTimeout(() => {
           setIsSuccess(false);
-          setFormData({
-            password: '',
-            confirmPassword: ''
-          });
-        }, 3000);
-      }, 1500);
+          navigate('/');
+        }, 2000);
+  
+      } catch (error) {
+        setIsSubmitting(false);
+        setErrorMessage(
+          error.response?.data?.message || 
+          'Ocurrió un error al cambiar la contraseña. Por favor intenta nuevamente.'
+        );
+        toast.error('Error al cambiar la contraseña');
+        console.error('Error al cambiar contraseña:', error);
+      }
     }
   };
   
@@ -77,6 +124,13 @@ const ChangePassword = () => {
   
   const passwordStrength = getPasswordStrength(formData.password);
   
+  // Verificar si tenemos token al cargar
+  useEffect(() => {
+    if (!tokenToUse) {
+      setErrorMessage('No se proporcionó un token válido en la URL.');
+    }
+  }, [tokenToUse]);
+  
   return (
     <div className="container py-5">
       <div className="row justify-content-center">
@@ -88,7 +142,7 @@ const ChangePassword = () => {
                   <i className="bi bi-check-lg"></i>
                 </div>
                 <h3 className="mt-4">¡Contraseña actualizada!</h3>
-                <p>Tu contraseña ha sido cambiada exitosamente</p>
+                <p>{successMessage}</p>
               </div>
             ) : (
               <>
@@ -101,6 +155,12 @@ const ChangePassword = () => {
                       <i className="bi bi-shield-lock"></i>
                     </div>
                   </div>
+                  
+                  {errorMessage && (
+                    <div className="alert alert-danger mb-4" role="alert">
+                      {errorMessage}
+                    </div>
+                  )}
                   
                   <form className="needs-validation" onSubmit={handleSubmit} noValidate>
                     <div className="mb-4">
@@ -171,7 +231,7 @@ const ChangePassword = () => {
                       <button 
                         type="submit" 
                         className="btn btn-primary btn-lg"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || !tokenToUse}
                       >
                         {isSubmitting ? (
                           <>

@@ -1,0 +1,67 @@
+/* Estilos para la tabla de roles */
+.table-container {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  margin: 2rem auto;
+}
+
+.table thead {
+  background: linear-gradient(45deg, #4158d0, #c850c0);
+  color: white;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  transform: scale(1.01);
+  /* transition: all 0.1s ease; */
+}
+
+.badge {
+  padding: 8px 12px;
+  font-weight: 500;
+}
+
+.action-buttons button {
+  margin: 0 3px;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+}
+
+.form-check-input:checked {
+  background-color: #c850c0;
+  border-color: #c850c0;
+}
+
+@media (max-width: 767.98px) {
+  .mobile-header {
+      display: block;
+      margin-bottom: 1rem;
+      text-align: center;
+      font-weight: bold;
+      color: #4158d0;
+  }
+  
+  .table-responsive-stack td {
+      display: block;
+      text-align: right;
+      border-bottom: none;
+      position: relative;
+      padding-left: 50%;
+  }
+  
+  .table-responsive-stack td:before {
+      content: attr(data-label);
+      position: absolute;
+      left: 12px;
+      width: 45%;
+      text-align: left;
+      font-weight: bold;
+  }
+  
+  .table-responsive-stack tr {
+      border-bottom: 1px solid #dee2e6;
+      margin-bottom: 1rem;
+      display: block;
+  }
+}
