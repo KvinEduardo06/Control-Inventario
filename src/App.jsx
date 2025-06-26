@@ -2,21 +2,24 @@ import { Routes, Route } from 'react-router-dom';
 import Login from './pages/public/Login/Login';
 import PublicRoutes from './routes/PublicRoutes';
 import PrivateRoutes from './routes/PrivateRoutes';
-import { toast } from 'react-toastify';
-
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import { AuthProvider } from './pages/private/context/AuthContext'; // <-- importar el provider
+
 function App() {
   return (
-    <><Routes>
-      {/* Rutas públicas */}
-      <Route path="/" element={<Login />} />
+    <AuthProvider> {/* Proveer el contexto a toda la app */}
+      <Routes>
+        {/* Rutas públicas */}
+        <Route path="/" element={<Login />} />
 
-      {/* Rutas privadas */}
-      <Route path="/*" element={<PrivateRoutes />} />
+        {/* Rutas privadas */}
+        <Route path="/*" element={<PrivateRoutes />} />
+      </Routes>
 
-    </Routes><ToastContainer position="top-right" autoClose={3000} /></>
-
+      <ToastContainer position="top-right" autoClose={3000} />
+    </AuthProvider>
   );
 }
 

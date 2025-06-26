@@ -78,7 +78,7 @@ export default function Sidebar({
 
         // console.log("TOKEN ENVIADO:", token);
 
-        const response = await axios.get('http://172.16.20.149:4000/api/private/rol/verMenu', {
+        const response = await axios.get('http://172.16.20.149:4000/api/public/usuario/verMenu', {
           headers: {
             Authorization: `Bearer ${token}`
           }

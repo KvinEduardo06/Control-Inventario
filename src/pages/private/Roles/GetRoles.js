@@ -20,9 +20,9 @@ export const obtenerRoles = async () => {
         };
         
         // Realizar la petición al endpoint de roles
-        const response = await axios.get(`${BASE_URL}rol`, config);
+        const response = await axios.get(`${BASE_URL}rol/`, config);
         
-        console.log("Respuesta de roles:", response.data);
+        // console.log("Respuesta de roles:", response.data);
         
         return response.data;
     } catch (error) {
